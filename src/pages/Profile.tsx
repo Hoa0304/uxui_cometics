@@ -9,9 +9,18 @@ const Profile = () => {
   const { user } = useAuth()
   const [activeTab, setActiveTab] = useState('profile')
 
+  // Default user if not logged in (for demo purposes)
+  const displayUser = user || {
+    id: '1',
+    email: 'demo@example.com',
+    name: 'Demo User',
+    role: 'user' as const,
+    avatar: 'https://i.pravatar.cc/150?img=47',
+  }
+
   const [profileData, setProfileData] = useState({
-    fullName: user?.name || '',
-    email: user?.email || '',
+    fullName: displayUser.name || '',
+    email: displayUser.email || '',
     phone: '',
     address: '',
     city: '',
@@ -37,10 +46,10 @@ const Profile = () => {
         <div className="profile-sidebar">
           <div className="profile-avatar-section">
             <div className="profile-avatar">
-              <img src={user?.avatar || 'https://i.pravatar.cc/150?img=47'} alt="Profile" />
+              <img src={displayUser.avatar || 'https://i.pravatar.cc/150?img=47'} alt="Profile" />
             </div>
-            <h2 className="profile-name">{user?.name}</h2>
-            <p className="profile-email">{user?.email}</p>
+            <h2 className="profile-name">{displayUser.name}</h2>
+            <p className="profile-email">{displayUser.email}</p>
           </div>
 
           <nav className="profile-nav">

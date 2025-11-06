@@ -18,21 +18,15 @@ import Cart from './pages/Cart'
 import Profile from './pages/Profile'
 import MyOrders from './pages/MyOrders'
 
-// Protected Route Component for Admin
+// Protected Route Component for Admin - Disabled (no login required)
 const AdminRoute = ({ children }: { children: React.ReactElement }) => {
-  const { isAuthenticated, isAdmin } = useAuth()
-  if (!isAuthenticated || !isAdmin) {
-    return <Navigate to="/login" replace />
-  }
+  // Allow access without login
   return children
 }
 
-// Protected Route Component for User
+// Protected Route Component for User - Disabled (no login required)
 const UserRoute = ({ children }: { children: React.ReactElement }) => {
-  const { isAuthenticated, isAdmin } = useAuth()
-  if (!isAuthenticated || isAdmin) {
-    return <Navigate to="/login" replace />
-  }
+  // Allow access without login
   return children
 }
 

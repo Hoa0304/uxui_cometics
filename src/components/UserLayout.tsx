@@ -15,9 +15,20 @@ const UserLayout = ({ children }: UserLayoutProps) => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
+  // Default user if not logged in (for demo purposes)
+  const displayUser = user || {
+    id: '1',
+    email: 'demo@example.com',
+    name: 'Demo User',
+    role: 'user' as const,
+    avatar: 'https://i.pravatar.cc/150?img=47',
+  }
+
   const handleLogout = () => {
-    logout()
-    navigate('/landing')
+    if (user) {
+      logout()
+      navigate('/landing')
+    }
   }
 
   return (
@@ -47,7 +58,7 @@ const UserLayout = ({ children }: UserLayoutProps) => {
             </Link>
             <div className="user-menu">
               <div className="user-avatar">
-                <img src={user?.avatar || 'https://i.pravatar.cc/150?img=47'} alt="User" />
+                <img src={displayUser.avatar || 'https://i.pravatar.cc/150?img=47'} alt="User" />
               </div>
               <div className="user-dropdown">
                 <Link to="/profile" className="dropdown-item">Profile</Link>
