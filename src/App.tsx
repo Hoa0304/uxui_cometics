@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { AuthProvider } from './contexts/AuthContext'
 import Layout from './components/Layout'
 import UserLayout from './components/UserLayout'
 import Landing from './pages/Landing'
@@ -15,6 +15,7 @@ import Settings from './pages/Settings'
 import Shop from './pages/Shop'
 import ProductDetail from './pages/ProductDetail'
 import Cart from './pages/Cart'
+import Checkout from './pages/Checkout'
 import Profile from './pages/Profile'
 import MyOrders from './pages/MyOrders'
 
@@ -25,8 +26,9 @@ const AdminRoute = ({ children }: { children: React.ReactElement }) => {
 }
 
 // Protected Route Component for User - Disabled (no login required)
+// Tất cả các route user đều có thể truy cập mà không cần đăng nhập
 const UserRoute = ({ children }: { children: React.ReactElement }) => {
-  // Allow access without login
+  // Allow access without login - Cho phép truy cập mà không cần đăng nhập
   return children
 }
 
@@ -98,6 +100,17 @@ function AppRoutes() {
           <UserRoute>
             <UserLayout>
               <Cart />
+            </UserLayout>
+          </UserRoute>
+        }
+      />
+      {/* Checkout Route - Không yêu cầu đăng nhập, có thể truy cập trực tiếp */}
+      <Route
+        path="/checkout"
+        element={
+          <UserRoute>
+            <UserLayout>
+              <Checkout />
             </UserLayout>
           </UserRoute>
         }

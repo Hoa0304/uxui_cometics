@@ -299,6 +299,35 @@
   margin: 0;
 }
 
+.success-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: 12px;
+  color: #166534;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.success-message span {
+  color: #10b981;
+  font-size: 18px;
+}
+
+.success-message a {
+  color: #8b5cf6;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.success-message a:hover {
+  text-decoration: underline;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .product-detail-container {

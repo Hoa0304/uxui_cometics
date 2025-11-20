@@ -1,16 +1,19 @@
 import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import './ProductDetail.css'
 
 /**
  * ProductDetail page - Trang chi tiết sản phẩm
+ * Hiển thị thông tin chi tiết sản phẩm, cho phép thêm vào giỏ hàng hoặc mua ngay
  */
 const ProductDetail = () => {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [quantity, setQuantity] = useState(1)
   const [selectedImage, setSelectedImage] = useState(0)
+  const [showAddedMessage, setShowAddedMessage] = useState(false)
 
-  // Mock product data
+  // Mock product data - Trong thực tế sẽ lấy từ API dựa trên id
   const product = {
     id: 1,
     name: 'Vitamin C Serum',
@@ -36,9 +39,41 @@ const ProductDetail = () => {
     size: '30ml',
   }
 
+  // Handle add to cart - Xử lý thêm vào giỏ hàng
   const handleAddToCart = () => {
-    console.log('Add to cart:', { productId: id, quantity })
-    // Navigate to cart or show success message
+    // Validate quantity - Kiểm tra số lượng hợp lệ
+    if (quantity < 1) {
+      return
+    }
+
+    // In thực tế sẽ gọi API hoặc cập nhật context/state management
+    console.log('Add to cart:', { productId: id, quantity, product })
+
+    // Hiển thị thông báo thành công
+    setShowAddedMessage(true)
+    setTimeout(() => {
+      setShowAddedMessage(false)
+    }, 3000)
+  }
+
+  // Handle buy now - Xử lý mua ngay, chuyển đến trang checkout
+  const handleBuyNow = () => {
+    // Validate quantity - Kiểm tra số lượng hợp lệ
+    if (quantity < 1) {
+      return
+    }
+
+    // In thực tế sẽ thêm sản phẩm vào giỏ hàng tạm thời hoặc truyền qua state
+    console.log('Buy now:', { productId: id, quantity, product })
+
+    // Chuyển đến trang checkout
+    navigate('/checkout', {
+      state: {
+        // Có thể truyền thông tin sản phẩm qua state để checkout xử lý
+        directPurchase: true,
+        product: { ...product, quantity },
+      },
+    })
   }
 
   return (
@@ -116,10 +151,17 @@ const ProductDetail = () => {
 
           <div className="product-actions">
             <button className="btn-add-to-cart" onClick={handleAddToCart}>
-              Add to Cart
+              {showAddedMessage ? '✓ Added to Cart!' : 'Add to Cart'}
             </button>
-            <button className="btn-buy-now">Buy Now</button>
+            <button className="btn-buy-now" onClick={handleBuyNow}>
+              Buy Now
+            </button>
           </div>
+          {showAddedMessage && (
+            <div className="success-message">
+              <span>✓</span> Product added to cart! <Link to="/cart">View Cart</Link>
+            </div>
+          )}
 
           <div className="product-info-tabs">
             <div className="tab-content">
