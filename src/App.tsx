@@ -104,9 +104,29 @@ function AppRoutes() {
           </UserRoute>
         }
       />
-      {/* Checkout Route - Không yêu cầu đăng nhập, có thể truy cập trực tiếp */}
+      {/* Checkout Routes - Không yêu cầu đăng nhập, có thể truy cập trực tiếp */}
       <Route
         path="/checkout"
+        element={
+          <UserRoute>
+            <UserLayout>
+              <Checkout />
+            </UserLayout>
+          </UserRoute>
+        }
+      />
+      <Route
+        path="/checkout/payment"
+        element={
+          <UserRoute>
+            <UserLayout>
+              <Checkout />
+            </UserLayout>
+          </UserRoute>
+        }
+      />
+      <Route
+        path="/checkout/review"
         element={
           <UserRoute>
             <UserLayout>

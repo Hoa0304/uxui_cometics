@@ -1,35 +1,65 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import './Checkout.css'
 
 /**
  * Checkout page - Trang thanh toán
  * Cho phép người dùng nhập thông tin giao hàng và thanh toán
+ * Có thể truy cập trực tiếp các route: /checkout, /checkout/payment, /checkout/review
  */
 const Checkout = () => {
   const navigate = useNavigate()
-  const [step, setStep] = useState<'shipping' | 'payment' | 'review'>('shipping')
+  const location = useLocation()
   const [isProcessing, setIsProcessing] = useState(false)
 
+  // Xác định step từ URL - Determine step from URL
+  const getStepFromPath = (): 'shipping' | 'payment' | 'review' => {
+    const path = location.pathname
+    if (path.includes('/review')) return 'review'
+    if (path.includes('/payment')) return 'payment'
+    return 'shipping'
+  }
+
+  const step = getStepFromPath()
+
+  // Load form data from localStorage - Tải dữ liệu form từ localStorage
+  const loadFormData = () => {
+    const savedShipping = localStorage.getItem('checkout_shipping')
+    const savedPayment = localStorage.getItem('checkout_payment')
+    return {
+      shipping: savedShipping ? JSON.parse(savedShipping) : {
+        fullName: '',
+        email: '',
+        phone: '',
+        address: '',
+        city: '',
+        postalCode: '',
+        country: 'Vietnam',
+      },
+      payment: savedPayment ? JSON.parse(savedPayment) : {
+        cardNumber: '',
+        cardName: '',
+        expiryDate: '',
+        cvv: '',
+        paymentMethod: 'card',
+      },
+    }
+  }
+
   // Form state - Thông tin giao hàng
-  const [shippingInfo, setShippingInfo] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    postalCode: '',
-    country: 'Vietnam',
-  })
+  const [shippingInfo, setShippingInfo] = useState(loadFormData().shipping)
 
   // Form state - Thông tin thanh toán
-  const [paymentInfo, setPaymentInfo] = useState({
-    cardNumber: '',
-    cardName: '',
-    expiryDate: '',
-    cvv: '',
-    paymentMethod: 'card', // 'card' | 'cod' (cash on delivery)
-  })
+  const [paymentInfo, setPaymentInfo] = useState(loadFormData().payment)
+
+  // Save form data to localStorage when changed - Lưu dữ liệu form vào localStorage khi thay đổi
+  useEffect(() => {
+    localStorage.setItem('checkout_shipping', JSON.stringify(shippingInfo))
+  }, [shippingInfo])
+
+  useEffect(() => {
+    localStorage.setItem('checkout_payment', JSON.stringify(paymentInfo))
+  }, [paymentInfo])
 
   // Mock cart items - Trong thực tế sẽ lấy từ context hoặc state management
   const cartItems = [
@@ -78,18 +108,18 @@ const Checkout = () => {
     )
   }
 
-  // Handle form submission - Xử lý submit form
+  // Handle form submission - Xử lý submit form và navigate đến route tương ứng
   const handleShippingSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (validateShipping()) {
-      setStep('payment')
+      navigate('/checkout/payment')
     }
   }
 
   const handlePaymentSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (validatePayment()) {
-      setStep('review')
+      navigate('/checkout/review')
     }
   }
 
@@ -98,6 +128,9 @@ const Checkout = () => {
     // Simulate API call - Giả lập gọi API
     await new Promise((resolve) => setTimeout(resolve, 2000))
     setIsProcessing(false)
+    // Clear form data from localStorage - Xóa dữ liệu form khỏi localStorage
+    localStorage.removeItem('checkout_shipping')
+    localStorage.removeItem('checkout_payment')
     // Navigate to success page or order confirmation
     navigate('/orders')
   }
@@ -105,22 +138,22 @@ const Checkout = () => {
   return (
     <div className="checkout-page">
       <div className="checkout-container">
-        {/* Progress Steps - Các bước thanh toán */}
+        {/* Progress Steps - Các bước thanh toán với link để truy cập trực tiếp */}
         <div className="checkout-progress">
-          <div className={`progress-step ${step === 'shipping' ? 'active' : step !== 'shipping' ? 'completed' : ''}`}>
+          <Link to="/checkout" className={`progress-step ${step === 'shipping' ? 'active' : step !== 'shipping' ? 'completed' : ''}`}>
             <div className="step-number">1</div>
             <div className="step-label">Shipping</div>
-          </div>
+          </Link>
           <div className={`progress-line ${step !== 'shipping' ? 'completed' : ''}`}></div>
-          <div className={`progress-step ${step === 'payment' ? 'active' : step === 'review' ? 'completed' : ''}`}>
+          <Link to="/checkout/payment" className={`progress-step ${step === 'payment' ? 'active' : step === 'review' ? 'completed' : ''}`}>
             <div className="step-number">2</div>
             <div className="step-label">Payment</div>
-          </div>
+          </Link>
           <div className={`progress-line ${step === 'review' ? 'completed' : ''}`}></div>
-          <div className={`progress-step ${step === 'review' ? 'active' : ''}`}>
+          <Link to="/checkout/review" className={`progress-step ${step === 'review' ? 'active' : ''}`}>
             <div className="step-number">3</div>
             <div className="step-label">Review</div>
-          </div>
+          </Link>
         </div>
 
         <div className="checkout-content">
@@ -307,9 +340,9 @@ const Checkout = () => {
                 )}
 
                 <div className="form-actions">
-                  <button type="button" className="btn-back" onClick={() => setStep('shipping')}>
+                  <Link to="/checkout" className="btn-back">
                     Back
-                  </button>
+                  </Link>
                   <button type="submit" className="btn-continue">
                     Review Order
                   </button>
@@ -365,9 +398,9 @@ const Checkout = () => {
                   </div>
                 </div>
                 <div className="form-actions">
-                  <button type="button" className="btn-back" onClick={() => setStep('payment')}>
+                  <Link to="/checkout/payment" className="btn-back">
                     Back
-                  </button>
+                  </Link>
                   <button
                     type="button"
                     className="btn-place-order"
