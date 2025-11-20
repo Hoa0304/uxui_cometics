@@ -42,6 +42,7 @@ const Checkout = () => {
         expiryDate: '',
         cvv: '',
         paymentMethod: 'card',
+        bankName: '', // Thêm trường bank name
       },
     }
   }
@@ -330,6 +331,17 @@ const Checkout = () => {
                         />
                       </div>
                     </div>
+                    <div className="form-group">
+                      <label htmlFor="bankName">Bank Name *</label>
+                      <input
+                        type="text"
+                        id="bankName"
+                        value={paymentInfo.bankName || ''}
+                        onChange={(e) => setPaymentInfo({ ...paymentInfo, bankName: e.target.value })}
+                        required
+                        placeholder="MB Bank"
+                      />
+                    </div>
                   </>
                 )}
 
@@ -357,14 +369,14 @@ const Checkout = () => {
                 <div className="review-section">
                   <h3>Shipping Address</h3>
                   <div className="review-info">
-                    <p>{shippingInfo.fullName}</p>
-                    <p>{shippingInfo.address}</p>
+                    <p><strong>Name:</strong> {shippingInfo.fullName || 'Tran Hoa'}</p>
+                    <p><strong>Street Address:</strong> {shippingInfo.address || '29 Co Man Mai 4'}</p>
                     <p>
-                      {shippingInfo.city}, {shippingInfo.postalCode}
+                      <strong>City and Postal Code:</strong> {shippingInfo.city || 'Da Nang'}, {shippingInfo.postalCode || '550000'}
                     </p>
-                    <p>{shippingInfo.country}</p>
-                    <p>Phone: {shippingInfo.phone}</p>
-                    <p>Email: {shippingInfo.email}</p>
+                    <p><strong>Country:</strong> {shippingInfo.country || 'Vietnam'}</p>
+                    <p><strong>Phone Number:</strong> {shippingInfo.phone || '0789469867'}</p>
+                    <p><strong>Email Address:</strong> {shippingInfo.email || 'hoa@gmail.com'}</p>
                   </div>
                 </div>
                 <div className="review-section">
@@ -372,8 +384,8 @@ const Checkout = () => {
                   <div className="review-info">
                     {paymentInfo.paymentMethod === 'card' ? (
                       <>
-                        <p>Card ending in {paymentInfo.cardNumber.slice(-4)}</p>
-                        <p>{paymentInfo.cardName}</p>
+                        <p><strong>Card Information:</strong> Card ending in {paymentInfo.cardNumber ? paymentInfo.cardNumber.slice(-4) : '6855'}</p>
+                        <p><strong>Bank Name:</strong> {paymentInfo.bankName || 'MB Bank'}</p>
                       </>
                     ) : (
                       <p>Cash on Delivery</p>
